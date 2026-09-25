@@ -46,6 +46,18 @@ public class UserService {
         }
     }
 
+    public List<User> getUsersByFullName(String fullName) {
+        if (fullName == null || fullName.isBlank()) {
+            throw new BusinessException("ФИО для поиска не может быть пустым.");
+        }
+
+        try {
+            return repository.getUserByFullName(fullName.trim());
+        } catch (SQLException e) {
+            throw new RuntimeException("Ошибка при поиске пользователей", e);
+        }
+    }
+
     public boolean changeUser(User user) {
         validateUser(user);
         try {
