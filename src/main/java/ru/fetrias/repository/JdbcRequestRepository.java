@@ -89,7 +89,7 @@ public class JdbcRequestRepository implements RequestRepository{
                             resultSet.getObject("checkin_date", LocalDate.class),
                             resultSet.getInt("duration_days"),
                             resultSet.getObject("create_date", LocalDate.class),
-                            resultSet.getObject("status", RequestStatus.class)
+                            RequestStatus.valueOf(resultSet.getString("status"))
                     );
                     return Optional.of(request);
                 }
