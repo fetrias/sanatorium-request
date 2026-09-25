@@ -86,7 +86,7 @@ public class JdbcRequestRepository implements RequestRepository{
                             resultSet.getLong("id"),
                             resultSet.getLong("user_id"),
                             resultSet.getString("sanatorium_name"),
-                            resultSet.getObject("checkin_date", LocalDate.class),
+                            resultSet.getObject("check_in_date", LocalDate.class),
                             resultSet.getInt("duration_days"),
                             resultSet.getObject("create_date", LocalDate.class),
                             RequestStatus.valueOf(resultSet.getString("status"))
