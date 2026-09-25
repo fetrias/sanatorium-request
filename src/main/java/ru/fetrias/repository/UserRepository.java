@@ -13,6 +13,8 @@ public interface UserRepository {
 
     Optional<User> getUserById(long id) throws SQLException;
 
+    List<User> getUserByFullName(String fullName) throws SQLException;
+
     boolean changeUser(User user) throws SQLException;
 
     boolean deleteUser(long id) throws SQLException;

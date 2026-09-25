@@ -87,6 +87,34 @@ public class JdbcUserRepository implements UserRepository{
     }
 
     @Override
+    public List<User> getUserByFullName(String fullName) throws SQLException {
+        String sql = """
+                SELECT * FROM users
+                WHERE LOWER(full_name) LIKE  LOWER(?)
+                """;
+        List<User> users = new ArrayList<>();
+
+        try (Connection connection = DatabaseManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)){
+
+            statement.setString(1, "%" + fullName + "%");
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    User user = new User(
+                            resultSet.getLong("id"),
+                            resultSet.getString("full_name"),
+                            resultSet.getObject("birth_date", LocalDate.class),
+                            resultSet.getString("phone")
+                    );
+                    users.add(user);
+                }
+            }
+        }
+        return users;
+    }
+
+    @Override
     public boolean changeUser(User user) throws SQLException {
         String sql = """
                 UPDATE users
