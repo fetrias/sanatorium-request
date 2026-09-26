@@ -223,6 +223,8 @@ public class ConsoleUI {
                     6. Найти заявки по названию санатория
                     7. Фильтровать заявки по статусу
                     8. Фильтровать заявки по длительности
+                    9. Сортировать заявки по дате заезда
+                    10. Сортировать заявки по длительности
                     0. Вернуться в главное меню
                     Выберите действие:
                     """);
@@ -238,6 +240,8 @@ public class ConsoleUI {
                 case "6" -> showRequestsBySanatoriumName();
                 case "7" -> showRequestsByStatus();
                 case "8" -> showRequestsByDurationDays();
+                case "9" -> showRequestsSortedByCheckInDate();
+                case "10" -> showRequestsSortedByDurationDays();
                 case "0" -> {
                     return;
                 }
@@ -433,5 +437,55 @@ public class ConsoleUI {
         } catch (RuntimeException e) {
             System.out.println("Ошибка базы данных: " + e.getMessage());
         }
+    }
+
+    private void showRequestsSortedByCheckInDate() {
+        try {
+            boolean ascending = readSortDirection();
+            List<Request> requests = requestService.sortByCheckInDate(ascending);
+
+            if (requests.isEmpty()) {
+                System.out.println("Заявок пока нет");
+                return;
+            }
+
+            requests.forEach(System.out::println);
+        } catch (BusinessException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Ошибка базы данных: " + e.getMessage());
+        }
+    }
+
+    private void showRequestsSortedByDurationDays() {
+        try {
+            boolean ascending = readSortDirection();
+            List<Request> requests = requestService.sortByDurationDays(ascending);
+
+            if (requests.isEmpty()) {
+                System.out.println("Заявок пока нет");
+                return;
+            }
+
+            requests.forEach(System.out::println);
+        } catch (BusinessException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Ошибка базы данных: " + e.getMessage());
+        }
+    }
+
+    private boolean readSortDirection() {
+        System.out.println("""
+                Выберите направление сортировки:
+                1. По возрастанию
+                2. По убыванию
+                """);
+
+        return switch (scanner.nextLine().trim()) {
+            case "1" -> true;
+            case "2" -> false;
+            default -> throw new BusinessException("Некорректное направление сортировки.");
+        };
     }
 }

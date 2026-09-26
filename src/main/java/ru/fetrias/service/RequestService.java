@@ -9,6 +9,7 @@ import ru.fetrias.repository.UserRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -89,6 +90,28 @@ public class RequestService {
         return getAllRequests().stream()
                 .filter(request -> request.getDurationDays() >= minDays)
                 .filter(request -> request.getDurationDays() <= maxDays)
+                .toList();
+    }
+
+    public List<Request> sortByCheckInDate(boolean ascending) {
+        Comparator<Request> comparator = Comparator.comparing(Request::getCheckInDate);
+        if (!ascending) {
+            comparator = comparator.reversed();
+        }
+
+        return getAllRequests().stream()
+                .sorted(comparator)
+                .toList();
+    }
+
+    public List<Request> sortByDurationDays(boolean ascending) {
+        Comparator<Request> comparator = Comparator.comparingInt(Request::getDurationDays);
+        if (!ascending) {
+            comparator = comparator.reversed();
+        }
+
+        return getAllRequests().stream()
+                .sorted(comparator)
                 .toList();
     }
 
