@@ -68,6 +68,30 @@ public class RequestService {
                 .toList();
     }
 
+    public List<Request> filterByStatus(RequestStatus status) {
+        if (status == null) {
+            throw new BusinessException("Статус для фильтрации не указан.");
+        }
+
+        return getAllRequests().stream()
+                .filter(request -> request.getStatus() == status)
+                .toList();
+    }
+
+    public List<Request> filterByDurationDays(int minDays, int maxDays) {
+        if (minDays <= 0 || maxDays <= 0) {
+            throw new BusinessException("Границы длительности должны быть больше нуля.");
+        }
+        if (minDays > maxDays) {
+            throw new BusinessException("Минимальная длительность не может быть больше максимальной.");
+        }
+
+        return getAllRequests().stream()
+                .filter(request -> request.getDurationDays() >= minDays)
+                .filter(request -> request.getDurationDays() <= maxDays)
+                .toList();
+    }
+
     public boolean changeRequest(Request request) {
         validateRequest(request);
         ensureUserExists(request.getUserId());

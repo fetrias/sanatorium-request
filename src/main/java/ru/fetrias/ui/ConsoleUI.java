@@ -221,6 +221,8 @@ public class ConsoleUI {
                     4. Изменить заявку
                     5. Удалить заявку
                     6. Найти заявки по названию санатория
+                    7. Фильтровать заявки по статусу
+                    8. Фильтровать заявки по длительности
                     0. Вернуться в главное меню
                     Выберите действие:
                     """);
@@ -234,6 +236,8 @@ public class ConsoleUI {
                 case "4" -> changeRequest();
                 case "5" -> deleteRequest();
                 case "6" -> showRequestsBySanatoriumName();
+                case "7" -> showRequestsByStatus();
+                case "8" -> showRequestsByDurationDays();
                 case "0" -> {
                     return;
                 }
@@ -375,6 +379,55 @@ public class ConsoleUI {
             }
 
             requests.forEach(System.out::println);
+        } catch (BusinessException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Ошибка базы данных: " + e.getMessage());
+        }
+    }
+
+    private void showRequestsByStatus() {
+        try {
+            System.out.println(
+                    "Введите статус: CREATED, UNDER_REVIEW, APPROVED, REJECTED или CANCELLED"
+            );
+            RequestStatus status = RequestStatus.valueOf(
+                    scanner.nextLine().trim().toUpperCase()
+            );
+
+            List<Request> requests = requestService.filterByStatus(status);
+            if (requests.isEmpty()) {
+                System.out.println("Заявки с таким статусом не найдены");
+                return;
+            }
+
+            requests.forEach(System.out::println);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ошибка: указан некорректный статус");
+        } catch (BusinessException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Ошибка базы данных: " + e.getMessage());
+        }
+    }
+
+    private void showRequestsByDurationDays() {
+        try {
+            System.out.println("Введите минимальную длительность в днях:");
+            int minDays = Integer.parseInt(scanner.nextLine().trim());
+
+            System.out.println("Введите максимальную длительность в днях:");
+            int maxDays = Integer.parseInt(scanner.nextLine().trim());
+
+            List<Request> requests = requestService.filterByDurationDays(minDays, maxDays);
+            if (requests.isEmpty()) {
+                System.out.println("Заявки с такой длительностью не найдены");
+                return;
+            }
+
+            requests.forEach(System.out::println);
+        } catch (NumberFormatException e) {
+            System.out.println("Ошибка: длительность должна быть целым числом");
         } catch (BusinessException e) {
             System.out.println("Ошибка: " + e.getMessage());
         } catch (RuntimeException e) {
