@@ -5,6 +5,7 @@ import ru.fetrias.repository.JdbcUserRepository;
 import ru.fetrias.repository.RequestRepository;
 import ru.fetrias.repository.UserRepository;
 import ru.fetrias.service.RequestService;
+import ru.fetrias.service.StatisticsService;
 import ru.fetrias.service.UserService;
 import ru.fetrias.ui.ConsoleUI;
 
@@ -17,8 +18,9 @@ public class Main {
 
         UserService userService = new UserService(userRepository);
         RequestService requestService = new RequestService(requestRepository, userRepository);
+        StatisticsService statisticsService = new StatisticsService(userService, requestService);
 
-        ConsoleUI consoleUI = new ConsoleUI(userService, requestService);
+        ConsoleUI consoleUI = new ConsoleUI(userService, requestService, statisticsService);
         consoleUI.run();
     }
 }

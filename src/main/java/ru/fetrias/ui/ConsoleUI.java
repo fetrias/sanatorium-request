@@ -7,6 +7,7 @@ import ru.fetrias.model.Request;
 import ru.fetrias.model.RequestStatus;
 import ru.fetrias.model.User;
 import ru.fetrias.service.RequestService;
+import ru.fetrias.service.StatisticsService;
 import ru.fetrias.service.UserService;
 
 import java.time.LocalDate;
@@ -18,10 +19,13 @@ public class ConsoleUI {
     private final Scanner scanner;
     private final UserService userService;
     private final RequestService requestService;
+    private final StatisticsService statisticsService;
 
-    public ConsoleUI (UserService userService, RequestService requestService) {
+    public ConsoleUI(UserService userService, RequestService requestService,
+                     StatisticsService statisticsService) {
         this.userService = userService;
         this.requestService = requestService;
+        this.statisticsService = statisticsService;
         this.scanner = new Scanner(System.in);
     }
 
@@ -36,7 +40,7 @@ public class ConsoleUI {
             switch (choice) {
                 case "1" -> showUserMenu();
                 case "2" -> showRequestMenu();
-                case "3" -> System.out.println("Статистика");
+                case "3" -> showStatistics();
                 case "4" -> System.out.println("Экспорт данных");
                 case "5" -> System.out.println("Таблицы базы данных");
                 case "0" -> {
@@ -487,5 +491,16 @@ public class ConsoleUI {
             case "2" -> false;
             default -> throw new BusinessException("Некорректное направление сортировки.");
         };
+    }
+
+    private void showStatistics() {
+        try {
+            System.out.println("=============== СТАТИСТИКА ===============");
+            statisticsService.getStatistics().forEach(
+                    (name, value) -> System.out.println(name + ": " + value)
+            );
+        } catch (RuntimeException e) {
+            System.out.println("Ошибка базы данных: " + e.getMessage());
+        }
     }
 }
