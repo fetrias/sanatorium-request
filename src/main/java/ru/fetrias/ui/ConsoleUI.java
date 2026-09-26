@@ -220,6 +220,7 @@ public class ConsoleUI {
                     3. Найти заявку по ID
                     4. Изменить заявку
                     5. Удалить заявку
+                    6. Найти заявки по названию санатория
                     0. Вернуться в главное меню
                     Выберите действие:
                     """);
@@ -232,6 +233,7 @@ public class ConsoleUI {
                 case "3" -> showRequestById();
                 case "4" -> changeRequest();
                 case "5" -> deleteRequest();
+                case "6" -> showRequestsBySanatoriumName();
                 case "0" -> {
                     return;
                 }
@@ -355,6 +357,25 @@ public class ConsoleUI {
         } catch (NumberFormatException e) {
             System.out.println("Ошибка: ID должен быть целым числом");
         } catch (EntityNotFoundException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Ошибка базы данных: " + e.getMessage());
+        }
+    }
+
+    private void showRequestsBySanatoriumName() {
+        try {
+            System.out.println("Введите название санатория или его часть:");
+            String sanatoriumName = scanner.nextLine().trim();
+
+            List<Request> requests = requestService.searchBySanatoriumName(sanatoriumName);
+            if (requests.isEmpty()) {
+                System.out.println("Заявки не найдены");
+                return;
+            }
+
+            requests.forEach(System.out::println);
+        } catch (BusinessException e) {
             System.out.println("Ошибка: " + e.getMessage());
         } catch (RuntimeException e) {
             System.out.println("Ошибка базы данных: " + e.getMessage());

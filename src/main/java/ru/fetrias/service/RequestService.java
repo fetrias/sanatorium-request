@@ -10,6 +10,7 @@ import ru.fetrias.repository.UserRepository;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class RequestService {
@@ -52,6 +53,19 @@ public class RequestService {
         } catch (SQLException e) {
             throw new RuntimeException("Ошибка при получении заявки", e);
         }
+    }
+
+    public List<Request> searchBySanatoriumName(String sanatoriumName) {
+        if (sanatoriumName == null || sanatoriumName.isBlank()) {
+            throw new BusinessException("Название санатория для поиска не может быть пустым.");
+        }
+
+        String searchText = sanatoriumName.trim().toLowerCase(Locale.ROOT);
+        return getAllRequests().stream()
+                .filter(request -> request.getSanatoriumName()
+                        .toLowerCase(Locale.ROOT)
+                        .contains(searchText))
+                .toList();
     }
 
     public boolean changeRequest(Request request) {
