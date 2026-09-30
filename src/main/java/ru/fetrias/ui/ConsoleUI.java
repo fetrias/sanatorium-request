@@ -6,6 +6,7 @@ import ru.fetrias.exception.EntityNotFoundException;
 import ru.fetrias.model.Request;
 import ru.fetrias.model.RequestStatus;
 import ru.fetrias.model.User;
+import ru.fetrias.service.DatabaseService;
 import ru.fetrias.service.ExportService;
 import ru.fetrias.service.RequestService;
 import ru.fetrias.service.StatisticsService;
@@ -22,13 +23,16 @@ public class ConsoleUI {
     private final RequestService requestService;
     private final StatisticsService statisticsService;
     private final ExportService exportService;
+    private final DatabaseService databaseService;
 
     public ConsoleUI(UserService userService, RequestService requestService,
-                     StatisticsService statisticsService, ExportService exportService) {
+                     StatisticsService statisticsService, ExportService exportService,
+                     DatabaseService databaseService) {
         this.userService = userService;
         this.requestService = requestService;
         this.statisticsService = statisticsService;
         this.exportService = exportService;
+        this.databaseService = databaseService;
         this.scanner = new Scanner(System.in);
     }
 
@@ -45,7 +49,7 @@ public class ConsoleUI {
                 case "2" -> showRequestMenu();
                 case "3" -> showStatistics();
                 case "4" -> exportData();
-                case "5" -> System.out.println("Таблицы базы данных");
+                case "5" -> showDatabaseTables();
                 case "0" -> {
                     System.out.println("Завершение программы");
                     running = false;
@@ -513,6 +517,21 @@ public class ConsoleUI {
             System.out.println(exportService.exportData());
         } catch (RuntimeException e) {
             System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private void showDatabaseTables() {
+        try {
+            List<String> tableNames = databaseService.getTableNames();
+            if (tableNames.isEmpty()) {
+                System.out.println("Таблицы не найдены");
+                return;
+            }
+
+            System.out.println("Таблицы схемы sanatorium:");
+            tableNames.forEach(tableName -> System.out.println("- " + tableName));
+        } catch (RuntimeException e) {
+            System.out.println("Ошибка базы данных: " + e.getMessage());
         }
     }
 }
