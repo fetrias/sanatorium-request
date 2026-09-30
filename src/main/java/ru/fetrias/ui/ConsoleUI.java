@@ -6,6 +6,7 @@ import ru.fetrias.exception.EntityNotFoundException;
 import ru.fetrias.model.Request;
 import ru.fetrias.model.RequestStatus;
 import ru.fetrias.model.User;
+import ru.fetrias.service.ExportService;
 import ru.fetrias.service.RequestService;
 import ru.fetrias.service.StatisticsService;
 import ru.fetrias.service.UserService;
@@ -20,12 +21,14 @@ public class ConsoleUI {
     private final UserService userService;
     private final RequestService requestService;
     private final StatisticsService statisticsService;
+    private final ExportService exportService;
 
     public ConsoleUI(UserService userService, RequestService requestService,
-                     StatisticsService statisticsService) {
+                     StatisticsService statisticsService, ExportService exportService) {
         this.userService = userService;
         this.requestService = requestService;
         this.statisticsService = statisticsService;
+        this.exportService = exportService;
         this.scanner = new Scanner(System.in);
     }
 
@@ -41,7 +44,7 @@ public class ConsoleUI {
                 case "1" -> showUserMenu();
                 case "2" -> showRequestMenu();
                 case "3" -> showStatistics();
-                case "4" -> System.out.println("Экспорт данных");
+                case "4" -> exportData();
                 case "5" -> System.out.println("Таблицы базы данных");
                 case "0" -> {
                     System.out.println("Завершение программы");
@@ -501,6 +504,15 @@ public class ConsoleUI {
             );
         } catch (RuntimeException e) {
             System.out.println("Ошибка базы данных: " + e.getMessage());
+        }
+    }
+
+    private void exportData() {
+        try {
+            System.out.println("Данные экспортированы в файл:");
+            System.out.println(exportService.exportData());
+        } catch (RuntimeException e) {
+            System.out.println("Ошибка: " + e.getMessage());
         }
     }
 }
